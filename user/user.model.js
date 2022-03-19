@@ -1,18 +1,21 @@
-class User{
-    static listAll(){
-        return [
-            {
-                username: "Carl Johnson",
-                tel: "9 9999-9999",
-                age: 32
-            },
-            {
-                username: "Vercetti",
-                tel: "9 8888-9999",
-                age: 38
-            },
-        ]
+const { Sequelize, DataTypes, Model } = require('sequelize')
+const sequelize = require('../db/sequelize-instance')
+
+const User = sequelize.define('User', {
+    userName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    birthDate: {
+        type: DataTypes.DATE,
+        allowNull: false
     }
-}
+}, {
+    freezeTableName: true
+})
 
 module.exports = User

@@ -1,5 +1,5 @@
-const sequelize = require('./sequelize-instance')
+const userModel = require('../user/user.model')
 
-sequelize.sync()
+userModel.sync() // Create table for every model registered on sequelize instance
     .then(() => { console.log('Table created') })
     .catch(() => { console.log('Failed when creating table') })

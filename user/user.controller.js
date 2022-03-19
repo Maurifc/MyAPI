@@ -1,10 +1,22 @@
 const User = require('./user.model')
 
 module.exports = {
-    listAll: (req, res) => {
-        const users = User.listAll()
+    list: async (req, res) => {
+        const users = await User.findAll({ raw: true})
         
         res.status(200)
-        res.send(JSON.stringify(users))
+        res.json(users)
+    },
+
+    create: (req, res) => {
+        const data = req.body
+
+        User.create({
+            userName: data.userName,
+            password: data.password,
+            bornDate: data.bornDate,
+        })
+
+        res.send(201)
     }
 }

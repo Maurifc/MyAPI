@@ -1,23 +1,10 @@
-const User = require('./user.model')
 const InvalidFieldError = require('../error/InvalidFieldError')
 const UserNotFoundError = require('../error/UserNotFoundError')
-
-
-// TODO: Move to another file
-function validate(userData){
-    const field = ['userName', 'password', 'bornDate']
-
-    field.forEach((field) => {
-        const value = userData[field]
-
-        if(typeof value !== 'string' || value.length === 0)
-            throw new InvalidFieldError()
-    })
-}
+const user = require('./user.js')
 
 module.exports = {
     list: async (req, res) => {
-        const users = await User.findAll({ raw: true})
+        const users = await user.list()
         
         res.status(200)
         res.json(users)
@@ -26,12 +13,9 @@ module.exports = {
     getUserById: async(req, res, next) => {
         try {
             const userId = req.params.userId
-            const user = await User.findByPk(userId)
+            const u = await user.getById(userId)
 
-            if(user === null)
-                throw new UserNotFoundError()
-
-            res.json(user)
+            res.json(u)
         } catch (error) {
             next(error)
         }
@@ -40,16 +24,9 @@ module.exports = {
     create: (req, res, next) => {
         try {
             const data = req.body
-
-            validate(data)
-
-            User.create({
-                userName: data.userName,
-                password: data.password,
-                bornDate: data.bornDate,
-            })
+            user.create(data)          
     
-            res.send(201)            
+            res.status(201).send()            
         } catch (error) {
             next(error)
         }
@@ -59,19 +36,8 @@ module.exports = {
         try {
             const userId = req.params.userId
             const data = req.body
-            const user = await User.findByPk(userId)
-
-            if(user === null)
-                throw new UserNotFoundError()
-                
-            if(Object.keys(data).length === 0)
-                throw new InvalidFieldError()
-                        
-            await User.update(data, {
-                where: {
-                    id: userId
-                }
-            })
+            
+            await user.update(data, userId)
 
             res.status(204).send()
         } catch (error) {
@@ -82,16 +48,8 @@ module.exports = {
     delete: async(req, res, next) => {
         try {
             const userId = req.params.userId
-            const user = await User.findByPk(userId)
     
-            if(user === null)
-                throw new UserNotFoundError()
-    
-            await User.destroy({
-                where: {
-                   id: userId 
-                }
-            })
+            await user.delete(userId)
     
             res.status(204).send()            
         } catch (error) {

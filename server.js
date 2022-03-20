@@ -1,6 +1,5 @@
 const app = require('./app') // Get app setup up on app.js file
 const userRouter = require('./user/user.router') // Import routes to /user
-const sequelize = require('./db/sequelize-instance')
 const port = 3000
 
 // Routes

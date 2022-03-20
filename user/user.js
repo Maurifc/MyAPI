@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 const User = require('./user.model')
 const InvalidFieldError = require('../error/InvalidFieldError')
 const UserNotFoundError = require('../error/UserNotFoundError')
@@ -11,6 +12,11 @@ function validate(userData){
         if(typeof value !== 'string' || value.length === 0)
             throw new InvalidFieldError()
     })
+}
+
+async function encryptPassword(plainTextPassword){
+    const saltRounds = 12
+    return await bcrypt.hash(plainTextPassword, saltRounds)
 }
 
 module.exports = {
@@ -27,12 +33,13 @@ module.exports = {
         return user
     },
 
-    create: (userData) => {
+    create: async(userData) => {
         validate(userData)
+        const passwordHash = await encryptPassword(userData.password)
 
         User.create({
             userName: userData.userName,
-            password: userData.password,
+            password: passwordHash,
             bornDate: userData.bornDate,
         })
     },
@@ -45,6 +52,12 @@ module.exports = {
             
         if(Object.keys(userData).length === 0)
             throw new InvalidFieldError()
+
+        if(userData.password !== undefined && userData.password.length > 0){
+            const passwordHash = await encryptPassword(userData.password)
+            userData.password = passwordHash
+        }
+
                     
         await User.update(userData, {
             where: {

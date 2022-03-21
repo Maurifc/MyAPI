@@ -14,6 +14,10 @@ module.exports = {
         res.set('Authorization', token) // Set header 'Authorization' with the login token
         res.status(204).send()
     },
+
+    logout: (req, res, next) => {
+        res.send()
+    },
     
     list: async (req, res) => {
         const users = await user.list()

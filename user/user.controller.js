@@ -1,10 +1,18 @@
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 const InvalidFieldError = require('../error/InvalidFieldError')
 const UserNotFoundError = require('../error/UserNotFoundError')
 const user = require('./user.js')
 
 module.exports = {
     login: (req, res) => {
-        res.send()
+        const payload = req.user.id // Injected on LocalStrategy setup
+        const secret = process.env.SECRET // get SECRET from .env file
+
+        const token = jwt.sign(payload, secret)
+
+        res.set('Authorization', token) // Set header 'Authorization' with the login token
+        res.status(204).send()
     },
     
     list: async (req, res) => {

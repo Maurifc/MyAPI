@@ -6,5 +6,11 @@ module.exports = {
             'local',
             { session: false }
         )(req, res, next)
+    },
+    bearer: (req, res, next) => {
+        passport.authenticate(
+            'bearer',
+            { session: false }
+        )(req, res, next)
     }
 }

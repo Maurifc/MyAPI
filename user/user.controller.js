@@ -3,6 +3,10 @@ const UserNotFoundError = require('../error/UserNotFoundError')
 const user = require('./user.js')
 
 module.exports = {
+    login: (req, res) => {
+        res.send()
+    },
+    
     list: async (req, res) => {
         const users = await user.list()
         
@@ -21,10 +25,10 @@ module.exports = {
         }
     },
 
-    create: (req, res, next) => {
+    create: async (req, res, next) => {
         try {
             const data = req.body
-            user.create(data)          
+            await user.create(data)          
     
             res.status(201).send()            
         } catch (error) {

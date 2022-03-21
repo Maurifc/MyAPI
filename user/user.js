@@ -33,6 +33,19 @@ module.exports = {
         return user
     },
 
+    getByUsername: async (userName) => {
+        const user = await User.findOne({
+            where: {
+                userName: userName
+            }
+        })
+
+        if(user === null)
+            throw new UserNotFoundError()
+        
+        return user
+    },
+
     create: async(userData) => {
         validate(userData)
         const passwordHash = await encryptPassword(userData.password)

@@ -22,5 +22,13 @@ module.exports = {
         const expiresIn = getTokenExpirationDate(token)
         const tokenHash = genTokenHash(token)
         await client.set(tokenHash, expiresIn)
+    },
+
+    verify: async(token) => {
+        const client =  redis.createClient()
+        await client.connect()
+
+        const tokenHash = genTokenHash(token)
+        return await client.get(tokenHash)  // Return true if token is blacklisted 
     }
 }

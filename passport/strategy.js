@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken')
 const user = require('../user/user')
 const IncorrectUsernameOrPasswordError = require('../error/IncorrectUsernameOrPasswordError')
 const InvalidTokenError = require('../error/InvalidTokenError')
+const blacklistManager = require('../redis/blacklistManager')
+
 require('dotenv').config()
 
 function checkUser(user){
@@ -24,6 +26,11 @@ async function checkToken(token){
     const valid = await jwt.verify(token, process.env.SECRET)
             
     if(!valid)
+        throw new InvalidTokenError()
+
+    const isBlacklisted = await blacklistManager.verify(token)
+
+    if(isBlacklisted)
         throw new InvalidTokenError()
 }
 

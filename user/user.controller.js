@@ -1,22 +1,30 @@
 const jwt = require('jsonwebtoken')
-require('dotenv').config()
-const InvalidFieldError = require('../error/InvalidFieldError')
-const UserNotFoundError = require('../error/UserNotFoundError')
 const user = require('./user.js')
+const blacklistManager = require('../redis/blacklistManager')
+require('dotenv').config()
 
 module.exports = {
     login: (req, res) => {
-        const payload = req.user.id // Injected on LocalStrategy setup
+        const payload = { id: req.user.id } // Injected on LocalStrategy setup
         const secret = process.env.SECRET // get SECRET from .env file
+        const expiration = { expiresIn: '10m'}
 
-        const token = jwt.sign(payload, secret)
+        const token = jwt.sign(payload, secret, expiration)
 
         res.set('Authorization', token) // Set header 'Authorization' with the login token
         res.status(204).send()
     },
 
-    logout: (req, res, next) => {
-        res.send()
+    logout: async(req, res, next) => {
+        try {
+            const token = req.token
+
+            await blacklistManager.add(token)
+
+            res.send()
+        } catch (error) {
+            next(error)
+        }
     },
     
     list: async (req, res) => {

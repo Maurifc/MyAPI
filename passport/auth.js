@@ -10,7 +10,11 @@ module.exports = {
     bearer: (req, res, next) => {
         passport.authenticate(
             'bearer',
-            { session: false }
+            { session: false },
+            (error, user, info) => {
+                req.token = info.token
+                return next()
+            }
         )(req, res, next)
     }
 }

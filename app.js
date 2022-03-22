@@ -2,6 +2,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const authStrategy = require('./passport/strategy')
+require('./redis/client')
 
 const app = express() // Create app from express
 app.use(bodyParser.json()) // Include body parser

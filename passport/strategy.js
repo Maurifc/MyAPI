@@ -50,7 +50,7 @@ passport.use(
     new BearerStrategy(async (token, done) => {
         try {
             await checkToken(token)
-            done(null, user)
+            done(null, user, { token: token })
         } catch (error) {
             done(error)
         }

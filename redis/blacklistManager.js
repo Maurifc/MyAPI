@@ -21,7 +21,8 @@ module.exports = {
 
         const expiresIn = getTokenExpirationDate(token)
         const tokenHash = genTokenHash(token)
-        await client.set(tokenHash, expiresIn)
+        await client.set(tokenHash, '')
+        await client.expireAt(tokenHash, expiresIn)
     },
 
     verify: async(token) => {
@@ -29,6 +30,6 @@ module.exports = {
         await client.connect()
 
         const tokenHash = genTokenHash(token)
-        return await client.get(tokenHash)  // Return true if token is blacklisted 
+        return client.exists(tokenHash) // Return true if token is blacklisted 
     }
 }
